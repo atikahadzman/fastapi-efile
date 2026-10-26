@@ -42,7 +42,7 @@ def update_staff(
     staff = fetch_staff_by_id(db, staffId)
 
     if staff is None:
-        return None
+        raise ValueError("The staff does not exist")
 
     update_data = staff_data.model_dump(exclude_unset=True)
 
@@ -64,7 +64,7 @@ def delete_staff(db: Session, staffId: int):
     staff = fetch_staff_by_id(db, staffId)
 
     if staff is None:
-        return None
+        raise ValueError("The staff does not exist")
 
     db.delete(staff)
     db.commit()

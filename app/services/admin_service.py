@@ -41,7 +41,7 @@ def update_admin(
     admin = fetch_admin_by_id(db, adminId)
 
     if admin is None:
-        return None
+        raise ValueError("This admin does not exist")
 
     update_data = admin_data.model_dump(exclude_unset=True)
 
@@ -63,7 +63,7 @@ def delete_admin(db: Session, adminId: int):
     admin = fetch_admin_by_id(db, adminId)
 
     if admin is None:
-        return None
+        raise ValueError("This admin does not exist")
 
     db.delete(admin)
     db.commit()

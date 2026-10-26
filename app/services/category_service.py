@@ -37,7 +37,7 @@ def update_category(
     category = fetch_category_by_id(db, categoryID)
 
     if category is None:
-        return None
+        raise ValueError("The category does not exist")
 
     update_data = category_data.model_dump(exclude_unset=True)
 
@@ -54,7 +54,7 @@ def delete_category(db: Session, categoryID: int):
     category = fetch_category_by_id(db, categoryID)
 
     if category is None:
-        return None
+        raise ValueError("The category does not exist")
 
     db.delete(category)
     db.commit()
