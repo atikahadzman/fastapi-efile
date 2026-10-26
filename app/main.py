@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 from app.db.database import engine
-from app.routers import admin, staff, category
+from app.routers import admin, staff, category, sub_category
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("db_logger")
@@ -33,3 +33,4 @@ async def root():
 app.include_router(admin.router)
 app.include_router(staff.router)
 app.include_router(category.router)
+app.include_router(sub_category.router)
