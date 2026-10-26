@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.cabinet import CabinetCreate, CabinetUpdate, CabinetResponse
-from app.services import cabinet
+from app.services import cabinet_service
 from app.dependencies import get_db
 
 router = APIRouter(prefix="/cabinet", tags=["cabinet"])
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/cabinet", tags=["cabinet"])
 # get all cabinet
 @router.get("", response_model=list[CabinetResponse])
 def get_all_cabinet(db: Session = Depends(get_db)):
-    return cabinet.fetch_all_cabinet(db)
+    return cabinet_service.fetch_all_cabinet(db)
 
 
 # get cabinet by cabinetid
@@ -22,7 +22,7 @@ def get_cabinet_by_id(
     cabinetid: str,
     db: Session = Depends(get_db)
 ):
-    cabinet_record = cabinet.fetch_cabinet_by_id(db, cabinetid)
+    cabinet_record = cabinet_service.fetch_cabinet_by_id(db, cabinetid)
 
     if cabinet_record is None:
         raise HTTPException(
