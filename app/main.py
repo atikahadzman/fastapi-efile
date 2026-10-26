@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 from app.db.database import engine
-from app.routers import admin, staff, category, sub_category, cabinet, level, file
+from app.routers import admin, staff, category, sub_category, cabinet, level, file, transaction
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("db_logger")
@@ -37,3 +37,4 @@ app.include_router(sub_category.router)
 app.include_router(cabinet.router)
 app.include_router(level.router)
 app.include_router(file.router)
+app.include_router(transaction.router)
