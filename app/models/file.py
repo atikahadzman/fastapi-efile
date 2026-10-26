@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from app.db.database import Base
-from datetime import datetime
+from sqlalchemy import Column, Date
+from datetime import date
 
 
 class File(Base):
@@ -8,7 +9,11 @@ class File(Base):
 
     fileNo = Column(String(30), primary_key=True, nullable=False)
     fileName = Column(String(100), unique=False, nullable=False)
-    fileDateIn = Column(datetime.now(), unique=False, nullable=False)
+    fileDateIn = Column(
+        Date,
+        default=date.today,
+        nullable=False
+    )
     categoryID = Column(String(30), unique=False, nullable=False)
     cabinetid = Column(Integer, unique=False, index=True)
     levelid = Column(Integer, unique=False, index=True)
