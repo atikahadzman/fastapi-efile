@@ -6,9 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.sub_category import SubCategoryCreate, SubCategoryUpdate, SubCategoryResponse
 from app.services import sub_category_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/sub-category", tags=["sub-category"])
+router = APIRouter(
+    prefix="/sub-category", 
+    tags=["sub-category"],
+    dependencies=[
+        Depends(require_role("admin"))
+    ]
+)
 
 # get all category
 @router.get("", response_model=list[SubCategoryResponse])

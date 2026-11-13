@@ -6,9 +6,21 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.admin import AdminCreate, AdminUpdate, AdminResponse
 from app.services import admin_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["Admin"],
+    dependencies=[Depends(require_role("admin"))]
+)
+
+# @router.get("/")
+# def get_admin_data(
+#     current_user=Depends(require_role("admin"))
+# ):
+#     return {
+#         "message": "Admin access granted"
+#     }
 
 # get all admin
 @router.get("", response_model=list[AdminResponse])

@@ -6,9 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.level import LevelCreate, LevelUpdate, LevelResponse
 from app.services import level_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/level", tags=["level"])
+router = APIRouter(
+    prefix="/level", 
+    tags=["level"],
+    dependencies=[
+        Depends(require_role("admin"))
+    ]
+)
 
 # get all level
 @router.get("", response_model=list[LevelResponse])

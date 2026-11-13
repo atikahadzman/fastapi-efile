@@ -6,9 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionResponse
 from app.services import transaction_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/transaction", tags=["transaction"])
+router = APIRouter(
+    prefix="/transaction", 
+    tags=["transaction"],
+    dependencies=[
+        Depends(require_role("admin", "staff"))
+    ]
+)
 
 # get all transaction
 @router.get("", response_model=list[TransactionResponse])

@@ -6,10 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.staff import StaffCreate, StaffUpdate, StaffResponse
 from app.services import staff_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/staff", tags=["staff"])
-
+router = APIRouter(
+    prefix="/staff",
+    tags=["staff"],
+    dependencies=[
+        Depends(require_role("admin", "staff"))
+    ]
+)
 
 # get all staff
 @router.get("", response_model=list[StaffResponse])

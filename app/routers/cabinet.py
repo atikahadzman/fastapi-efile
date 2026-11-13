@@ -6,9 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.cabinet import CabinetCreate, CabinetUpdate, CabinetResponse
 from app.services import cabinet_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/cabinet", tags=["cabinet"])
+router = APIRouter(
+    prefix="/cabinet", 
+    tags=["cabinet"],
+    dependencies=[
+        Depends(require_role("admin"))
+    ]
+)
 
 # get all cabinet
 @router.get("", response_model=list[CabinetResponse])

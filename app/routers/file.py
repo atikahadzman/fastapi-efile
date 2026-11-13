@@ -6,9 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.schemas.file import FileCreate, FileUpdate, FileResponse
 from app.services import file_service
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 
-router = APIRouter(prefix="/file", tags=["file"])
+router = APIRouter(
+    prefix="/file", 
+    tags=["file"],
+    dependencies=[
+        Depends(require_role("admin", "staff"))
+    ]
+)
 
 # get all file
 @router.get("", response_model=list[FileResponse])
