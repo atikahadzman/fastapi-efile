@@ -32,7 +32,14 @@ def authenticate_user(
                 "role": "admin"
             })
             
-            return token
+            return {
+                "access_token": token,
+                "id": admin.adminId,
+                "username": username,
+                "name": admin.adminName,
+                "unit": admin.adminUnit,
+                "role": 'Admin'
+            }
 
         return None
 
@@ -52,7 +59,14 @@ def authenticate_user(
                 "role": "staff"
             })
 
-            return token
+            return {
+                "access_token": token,
+                "id": staff.staffId,
+                "username": username,
+                "name": staff.staffName,
+                "unit": staff.staffUnit,
+                "role": 'Staff'
+            }
 
     return None
 

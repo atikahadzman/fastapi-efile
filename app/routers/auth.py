@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
@@ -10,6 +11,9 @@ from app.schemas.auth import (
 
 router = APIRouter()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("db_logger")
+
 
 @router.post("/login", response_model=TokenResponse)
 def login(
@@ -17,21 +21,26 @@ def login(
     db: Session = Depends(get_db)
 ):
 
-    token = authenticate_user(
+    user = authenticate_user(
         db,
         credentials.username,
         credentials.password
     )
 
-    if not token:
+    if not user:
         raise HTTPException(
             status_code=401,
             detail="Incorrect username or password"
         )
 
     return {
-        "access_token": token,
-        "token_type": "bearer"
+        "access_token": user["access_token"],
+        "token_type": "bearer",
+        "id": user["id"],
+        "username": user["username"],
+        "name": user["name"],
+        "unit": user["unit"],
+        "role": user["role"]
     }
 
 
