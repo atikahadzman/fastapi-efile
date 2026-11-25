@@ -1,3 +1,4 @@
+import math
 from sqlalchemy.orm import Session
 from app.models.cabinet import Cabinet
 from app.models.category import Category
@@ -6,54 +7,80 @@ from app.models.level import Level
 from app.models.sub_category import SubCategory
 from app.schemas.file import FileCreate, FileUpdate
 
-def fetch_all_file(db: Session):
-    files = (
-        db.query(
-            File,
-            Category.categoryName.label("categoryName"),
-            SubCategory.subName.label("subName"),
-            Cabinet.cabinetNo.label("cabinetNo"),
-            Level.levelNo.label("levelNo"),
-            Level.levelDesc.label("levelDesc")
-        )
-        .outerjoin(
-            Category,
-            File.categoryID == Category.categoryID
-        )
-        .outerjoin(
-            SubCategory,
-            File.subid == SubCategory.subid
-        )
-        .outerjoin(
-            Cabinet,
-            File.cabinetid == Cabinet.cabinetid
-        )
-        .outerjoin(
-            Level,
-            File.levelid == Level.levelid
-        )
-        .all()
-    )
+def fetch_all_file(
+        db: Session,
+        page: int = 1,
+        page_size: int = 10
+    ):
+        page = max(page, 1)
+        page_size = max(page_size, 1)
+        offset = (page - 1) * page_size
+        total_records = db.query(File).count()
 
-    return [
-        {
-            "fileNo": f.fileNo,
-            "fileName": f.fileName,
-            "fileDateIn": f.fileDateIn,
-            "categoryID": f.categoryID,
-            "categoryName": categoryName,
-            "cabinetid": f.cabinetid,
-            "cabinetNo": cabinetNo,
-            "levelid": f.levelid,
-            "levelNo": levelNo,
-            "levelDesc": levelDesc,
-            "subid": f.subid,
-            "subName": subName,
-            "fileStatus": f.fileStatus,
-            "fileStat": f.fileStat
+        files = (
+            db.query(
+                File,
+                Category.categoryName.label("categoryName"),
+                SubCategory.subName.label("subName"),
+                Cabinet.cabinetNo.label("cabinetNo"),
+                Level.levelNo.label("levelNo"),
+                Level.levelDesc.label("levelDesc")
+            )
+            .outerjoin(
+                Category,
+                File.categoryID == Category.categoryID
+            )
+            .outerjoin(
+                SubCategory,
+                File.subid == SubCategory.subid
+            )
+            .outerjoin(
+                Cabinet,
+                File.cabinetid == Cabinet.cabinetid
+            )
+            .outerjoin(
+                Level,
+                File.levelid == Level.levelid
+            )
+            .order_by(File.fileDateIn)
+            .offset(offset)
+            .limit(page_size)
+            .all()
+        )
+
+        result = [
+            {
+                "fileNo": f.fileNo,
+                "fileName": f.fileName,
+                "fileDateIn": f.fileDateIn,
+                "categoryID": f.categoryID,
+                "categoryName": categoryName,
+                "cabinetid": f.cabinetid,
+                "cabinetNo": cabinetNo,
+                "levelid": f.levelid,
+                "levelNo": levelNo,
+                "levelDesc": levelDesc,
+                "subid": f.subid,
+                "subName": subName,
+                "fileStatus": f.fileStatus,
+                "fileStat": f.fileStat
+            }
+            for f, categoryName, cabinetNo, levelNo, levelDesc, subName in files
+        ]
+
+        total_pages = math.ceil(total_records / page_size)
+        
+        return {
+            "data": result,
+            "pagination": {
+                "current_page": page,
+                "page_size": page_size,
+                "total_records": total_records,
+                "total_pages": total_pages,
+                "has_next": page < total_pages,
+                "has_previous": page > 1
+            }
         }
-        for f, categoryName, cabinetNo, levelNo, levelDesc, subName in files
-    ]
 
 
 def fetch_file_by_id(db: Session, fileNo: str):

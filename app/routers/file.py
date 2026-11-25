@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
-from app.schemas.file import FileCreate, FileUpdate, FileResponse
+from app.schemas.file import FileCreate, FileUpdate, FileResponse, FilePaginationResponse
 from app.services import file_service
 from app.dependencies import get_db, require_role
 
@@ -17,9 +17,13 @@ router = APIRouter(
 )
 
 # get all file
-@router.get("", response_model=list[FileResponse])
-def get_all_file(db: Session = Depends(get_db)):
-    return file_service.fetch_all_file(db)
+@router.get("", response_model=FilePaginationResponse)
+def get_all_file(
+        db: Session = Depends(get_db), 
+        page: int = 1,
+        page_size: int = 10
+    ):
+    return file_service.fetch_all_file(db, page=page, page_size=page_size)
 
 
 # get file by fileNo
