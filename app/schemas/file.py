@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import date
+from typing import Union
 
 class FileCreate(BaseModel):
     fileNo: str
@@ -29,9 +30,14 @@ class FileResponse(BaseModel):
     fileName: str
     fileDateIn: date
     categoryID: str
+    categoryName: str
     cabinetid: int
+    cabinetNo: str
     levelid: int
+    levelNo: Union[int, str]
+    levelDesc: Union[str, int]
     subid: int
+    subName: str
     fileStatus: str
     fileStat: str
 

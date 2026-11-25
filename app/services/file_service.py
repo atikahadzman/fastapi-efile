@@ -7,7 +7,53 @@ from app.models.sub_category import SubCategory
 from app.schemas.file import FileCreate, FileUpdate
 
 def fetch_all_file(db: Session):
-    return db.query(File).all()
+    files = (
+        db.query(
+            File,
+            Category.categoryName.label("categoryName"),
+            SubCategory.subName.label("subName"),
+            Cabinet.cabinetNo.label("cabinetNo"),
+            Level.levelNo.label("levelNo"),
+            Level.levelDesc.label("levelDesc")
+        )
+        .outerjoin(
+            Category,
+            File.categoryID == Category.categoryID
+        )
+        .outerjoin(
+            SubCategory,
+            File.subid == SubCategory.subid
+        )
+        .outerjoin(
+            Cabinet,
+            File.cabinetid == Cabinet.cabinetid
+        )
+        .outerjoin(
+            Level,
+            File.levelid == Level.levelid
+        )
+        .all()
+    )
+
+    return [
+        {
+            "fileNo": f.fileNo,
+            "fileName": f.fileName,
+            "fileDateIn": f.fileDateIn,
+            "categoryID": f.categoryID,
+            "categoryName": categoryName,
+            "cabinetid": f.cabinetid,
+            "cabinetNo": cabinetNo,
+            "levelid": f.levelid,
+            "levelNo": levelNo,
+            "levelDesc": levelDesc,
+            "subid": f.subid,
+            "subName": subName,
+            "fileStatus": f.fileStatus,
+            "fileStat": f.fileStat
+        }
+        for f, categoryName, cabinetNo, levelNo, levelDesc, subName in files
+    ]
 
 
 def fetch_file_by_id(db: Session, fileNo: str):

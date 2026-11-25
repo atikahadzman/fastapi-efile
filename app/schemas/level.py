@@ -1,3 +1,4 @@
+from typing import Union
 from pydantic import BaseModel, ConfigDict
 
 class LevelCreate(BaseModel):
@@ -19,8 +20,8 @@ class LevelUpdate(BaseModel):
 
 class LevelResponse(BaseModel):
     levelid: int
-    levelNo: int
-    levelDesc: str
+    levelNo: Union[int, str]
+    levelDesc: Union[str, int]
     categoryID: str
     cabinetid: int
     subid: int
