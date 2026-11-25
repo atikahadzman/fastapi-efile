@@ -4,11 +4,45 @@ from app.models.category import Category
 from app.models.file import File
 from app.models.level import Level
 from app.models.sub_category import SubCategory
+from app.models.staff import Staff
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionCreate, TransactionUpdate
 
 def fetch_all_transaction(db: Session):
-    return db.query(Transaction).all()
+    transactions = (
+        db.query(
+            Transaction,
+            Staff.staffName.label("staffName"),
+            File.fileName.label("fileName")
+        )
+        .outerjoin(
+            Staff,
+            Transaction.staffId == Staff.staffId
+        )
+        .outerjoin(
+            File,
+            Transaction.fileNo == File.fileNo
+        )
+        .all()
+    )
+
+    return [
+        {
+            "transID": t.transID,
+            "staffId": t.staffId,
+            "staffName": staff_name,
+            "categoryID": t.categoryID,
+            "cabinetid": t.cabinetid,
+            "levelid": t.levelid,
+            "fileNo": t.fileNo,
+            "fileName": file_name,
+            "fileDateTaken": t.fileDateTaken,
+            "fileDateReturn": t.fileDateReturn,
+            "fileTransStatus": t.fileTransStatus,
+            "subid": t.subid
+        }
+        for t, staff_name, file_name in transactions
+    ]
 
 
 def fetch_transaction_by_id(db: Session, transID: int):

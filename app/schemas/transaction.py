@@ -29,10 +29,12 @@ class TransactionUpdate(BaseModel):
 class TransactionResponse(BaseModel):
     transID: int
     staffId: str
+    staffName: str | None = None
     categoryID: str
     cabinetid: int
     levelid: int
     fileNo: str
+    fileName: str | None = None
     fileDateIn: date | None = None
     fileDateTaken: date | None = None
     fileDateReturn: date | None = None
